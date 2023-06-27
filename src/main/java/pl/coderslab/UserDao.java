@@ -9,13 +9,13 @@ import java.sql.SQLException;
 import java.util.Arrays;
 
 public class UserDao {
-    private static final String CREATE_USER_QUERY = "INSERT INTO users(username, email, password) VALUES (?, ?, ?)";
+    private static final String CREATE_USER_QUERY = "INSERT INTO users(username, email, password, visible) VALUES (?, ?, ?, ?)";
 
     private static final String READ_USER_QUERY = "SELECT * FROM users WHERE id = ?";
 
     private static final String UPDATE_USER_QUERY = "UPDATE users SET username = ?, email = ?, password = ? WHERE id = ?";
 
-    private static final String DELETE_USER_QUERY = "DELETE FROM users WHERE id = ?";
+    private static final String DELETE_USER_QUERY = "UPDATE users SET visible = 0 WHERE id = ?";
 
     private static final String FIND_ALL_USER_QUERY = "SELECT * FROM users";
 
@@ -24,13 +24,18 @@ public class UserDao {
         return BCrypt.hashpw(password,BCrypt.gensalt());
     }
 
-    public User create(User user){
+    public User create(User user) throws SQLException{
         try (Connection conn = DbUtil.getConnection()){
             PreparedStatement statement = conn.prepareStatement(CREATE_USER_QUERY, PreparedStatement.RETURN_GENERATED_KEYS);
             statement.setString(1, user.getUserName());
             statement.setString(2, user.getEmail());
             statement.setString(3, hashPassword(user.getPassword()));
-            statement.executeUpdate();
+            statement.setString(4, "1");
+            try {
+                statement.executeUpdate();
+            } catch (SQLException e){
+                throw e;
+            }
             ResultSet resultSet = statement.getGeneratedKeys();
             if(resultSet.next()){
                 user.setId(resultSet.getInt(1));
@@ -50,7 +55,7 @@ public class UserDao {
             statement.setInt(1,userId);
             ResultSet resultSet = statement.executeQuery();
             if(resultSet.next()){
-                return new User(resultSet.getInt("id"),resultSet.getString("username"),resultSet.getString("email"), resultSet.getString("password"));
+                return new User(resultSet.getInt("id"),resultSet.getString("username"),resultSet.getString("email"), resultSet.getString("password"), Integer.parseInt(resultSet.getString("visible")));
             }
             return null;
 
@@ -60,7 +65,7 @@ public class UserDao {
         }
     }
 
-    public void update(User user){
+    public void update(User user) throws SQLException {
         try( Connection conn = DbUtil.getConnection()){
             PreparedStatement statement = conn.prepareStatement(UPDATE_USER_QUERY);
             statement.setString(1, user.getUserName());
@@ -72,6 +77,7 @@ public class UserDao {
         } catch (SQLException e) {
             user.setId(0);
             e.printStackTrace();
+            throw e;
         }
 
     }
@@ -110,7 +116,7 @@ public class UserDao {
             ResultSet resultSet = statement.executeQuery();
             User[] users = new User[0];
             while (resultSet.next()){
-                User user = new User(resultSet.getInt("id"),resultSet.getString("username"), resultSet.getString("email"),resultSet.getString("password") );
+                User user = new User(resultSet.getInt("id"),resultSet.getString("username"), resultSet.getString("email"),resultSet.getString("password"),Integer.parseInt(resultSet.getString("visible")) );
                 users = addToArray( user,users);
             }
             return users;

@@ -22,6 +22,15 @@ public class ListServlet extends HttpServlet {
             if( msg.equals("added")){
                 req.setAttribute("msg","Poprawnie dodano nowego użytkownika");
             }
+            if( msg.equals("edited")){
+                req.setAttribute("msg","Poprawnie edytowano użytkownika");
+            }
+            if( msg.equals("erroradd")){
+                req.setAttribute("msg","Nie udało się dodać użytkownika");
+            }
+            if (msg.equals("erroredit")){
+                req.setAttribute("msg","Nie udało się edytować użytkownika");
+            }
         }
 
         getServletContext().getRequestDispatcher(getServletContext().getContextPath() + "/WEB-INF/list.jsp").forward(req,resp);

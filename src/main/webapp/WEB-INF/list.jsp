@@ -32,6 +32,7 @@
     </thead>
 
 <c:forEach items="${users}" var="user">
+<c:if test="${user.visible == '1'}">
     <tr>
         <td>${user.id}</td>
         <td>${user.userName}</td>
@@ -40,7 +41,7 @@
             <form method="post" action="/user/delete" >
                 <button type="submit" value="${user.id}" name="id">Usuń</button>
             </form>
-            <form method="post" action="/user/edit">
+            <form method="get" action="/user/edit">
                 <button type="submit" value="${user.id}" name="id">Edytuj</button>
             </form>
             <form method="get" action="/user/show">
@@ -48,7 +49,7 @@
             </form>
         </td>
     </tr>
-
+</c:if>
 </c:forEach>
 </table>
 

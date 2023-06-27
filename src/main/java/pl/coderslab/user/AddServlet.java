@@ -9,6 +9,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.sql.SQLException;
 
 @WebServlet("/user/add")
 public class AddServlet extends HttpServlet {
@@ -17,7 +18,7 @@ public class AddServlet extends HttpServlet {
         String msg = req.getParameter("msg");
         if (msg != null){
             if( msg.equals("error")){
-                req.setAttribute("msg","Coś poszło nie tak");
+                req.setAttribute("msg","Źle podane wartości");
             }
         }
         getServletContext().getRequestDispatcher(getServletContext().getContextPath() + "/WEB-INF/add.jsp").forward(req,resp);
@@ -33,7 +34,11 @@ public class AddServlet extends HttpServlet {
         if( !validUser(user)){
             resp.sendRedirect(getServletContext().getContextPath() + "/user/add?msg=error");
         }
-        userDao.create(user);
+        try {
+            userDao.create(user);
+        } catch (SQLException e){
+            resp.sendRedirect(getServletContext().getContextPath() + "/user/list?msg=erroradd");
+        }
         resp.sendRedirect(getServletContext().getContextPath() + "/user/list?msg=added");
 
     }
