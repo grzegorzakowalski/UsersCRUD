@@ -34,6 +34,9 @@ public class ListServlet extends HttpServlet {
             if (msg.equals("erroredit")){
                 req.setAttribute("msg","Nie udało się edytować użytkownika");
             }
+            if (msg.equals("errordelete")){
+                req.setAttribute("msg","Nie udało się usunąć użytkownika");
+            }
         }
 
         getServletContext().getRequestDispatcher(getServletContext().getContextPath() + "/WEB-INF/list.jsp").forward(req,resp);

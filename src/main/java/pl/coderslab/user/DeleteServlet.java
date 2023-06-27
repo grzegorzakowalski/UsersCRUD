@@ -26,9 +26,12 @@ public class DeleteServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         int id = Integer.parseInt(req.getParameter("id"));
         UserDao userDao = new UserDao();
-        userDao.delete(id);
-        // sprawdzenie czy nie wywalił SQL przy usuwaniu
-        resp.sendRedirect(getServletContext().getContextPath() + "/user/list?msg=deleted");
+        boolean confirmation = userDao.deleteWithConfirmation(id);
+        if ( confirmation) {
+            resp.sendRedirect(getServletContext().getContextPath() + "/user/list?msg=deleted");
+        } else {
+            resp.sendRedirect(getServletContext().getContextPath() + "/user/list?msg=errordelete");
+        }
 
     }
 }
