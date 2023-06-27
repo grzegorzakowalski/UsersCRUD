@@ -1,5 +1,8 @@
 package pl.coderslab.user;
 
+import pl.coderslab.User;
+import pl.coderslab.UserDao;
+
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
@@ -11,11 +14,21 @@ import java.io.IOException;
 public class DeleteServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        int id = Integer.parseInt(req.getParameter("id"));
+        UserDao userDao = new UserDao();
+        User user = userDao.read(id);
+        req.setAttribute("name",user.getUserName());
+        getServletContext().getRequestDispatcher(getServletContext().getContextPath() + "/WEB-INF/delete.jsp").forward(req,resp);
 
     }
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        int id = Integer.parseInt(req.getParameter("id"));
+        UserDao userDao = new UserDao();
+        userDao.delete(id);
+        // sprawdzenie czy nie wywalił SQL przy usuwaniu
+        resp.sendRedirect(getServletContext().getContextPath() + "/user/list?msg=deleted");
 
     }
 }

@@ -38,7 +38,7 @@
         <td>${user.userName}</td>
         <td>${user.email}</td>
         <td>
-            <form method="post" action="/user/delete" >
+            <form method="get" action="/user/delete" >
                 <button type="submit" value="${user.id}" name="id">Usuń</button>
             </form>
             <form method="get" action="/user/edit">

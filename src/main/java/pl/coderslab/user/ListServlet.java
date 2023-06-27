@@ -25,6 +25,9 @@ public class ListServlet extends HttpServlet {
             if( msg.equals("edited")){
                 req.setAttribute("msg","Poprawnie edytowano użytkownika");
             }
+            if( msg.equals("deleted")){
+                req.setAttribute("msg","Poprawnie usunięto użytkownika");
+            }
             if( msg.equals("erroradd")){
                 req.setAttribute("msg","Nie udało się dodać użytkownika");
             }
@@ -35,6 +38,7 @@ public class ListServlet extends HttpServlet {
 
         getServletContext().getRequestDispatcher(getServletContext().getContextPath() + "/WEB-INF/list.jsp").forward(req,resp);
     }
+    //TODO popraw linki i upiększ to
 
     @Override
     protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
